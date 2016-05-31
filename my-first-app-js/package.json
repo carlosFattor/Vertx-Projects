@@ -1,0 +1,14 @@
+{
+  "name": "my-first-app-js",
+  "dependencies": {
+    "vertx3-full": "^3.2.1"
+  },
+  "scripts": {
+    "start": "vertx run server.js"
+  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "author": "Carlos Fattor",
+  "license": "ISC"
+}
