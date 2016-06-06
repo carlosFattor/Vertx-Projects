@@ -5,28 +5,28 @@ var users = [{id: 1, name: "Carlos", idade: "21"},
 
 var myUser = {};
 
-var routes = function() {
-    eb.consumer("user.get.id", function(userId){
+var flows = function() {
+    eb.consumer("user.get.id", function(msg){
+        var userId = msg.body().id;
         users.forEach(function (u) {
-            if (u.id == userId.body().id) {
+            if (u.id == userId) {
                 myUser = u;
             } 
         });
-        userId.reply(myUser);
+        msg.reply(myUser);
     });
 
     eb.consumer("user.get.all").handler(function(msg) {
-        console.log(" MSG-> "+JSON.stringify(msg.body()));
         msg.reply(users);
     });
     
-    eb.consumer("user.post.one").handler(function(user){
-        //user["id"] = users.length+1;
+    eb.consumer("user.post.one").handler(function(msg){
+        var user = JSON.parse(msg.body().toString());
+        user.id = users.length+1;
         users.push(user);
-        user.reply(users); 
+        msg.reply(users); 
     });
-
 };
 
-module.export = routes();
+module.export = flows();
 
