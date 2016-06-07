@@ -7,21 +7,44 @@ module.exports = function (router) {
     router.route('GET', "/api/users/:id").handler(getOne);
     router.route('GET', "/api/users").handler(getAll);
     router.route('POST', "/api/users").handler(addOne);
-    
+    router.route('DELETE', "/api/users/:id").handler(deleteOne);
+
     // This body handler will be called for all routes
     router.route().handler(BodyHandler.create().handle);
     // Serve the static resources
     router.route().handler(StaticHandler.create().handle);
-    
+
     console.log("Server UP");
 }
 
+function deleteOne(context) {
+    var userId = context.request().getParam("id") || "";
+    console.log("deleteOne-> " + userId);
+    eb.send("user.delete.one",{'id': userId}, function (ar, ar_err) {
+        if (ar_err == null) {
+            context.response()
+                .setChunked(true)
+                .putHeader("content-type", "application/json")
+                .setStatusCode(200)
+                .write(JSON.stringify(ar.body()))
+                .end();
+        } else {
+            context.response()
+                .setChunked(true)
+                .putHeader("content-type", "application/json")
+                .setStatusCode(404)
+                .write({ "NOK": "Object not found" })
+                .end();
+        }
+    });
+}
+
 function addOne(context) {
-    context.request().bodyHandler(function(data){
-       var user = JSON.stringify(JSON.parse(data.toString()));
+    context.request().bodyHandler(function (data) {
+        var user = JSON.stringify(JSON.parse(data.toString()));
         console.log("addOne-> " + user);
         eb.send("user.post.one", user, function (ar, ar_err) {
-            if(ar_err == null){
+            if (ar_err == null) {
                 context.response()
                     .setChunked(true)
                     .putHeader("content-type", "application/json")
@@ -30,20 +53,20 @@ function addOne(context) {
                     .end();
             } else {
                 context.response()
-                .setChunked(true)
-                .putHeader("content-type", "application/json")
-                .setStatusCode(404)
-                .write({"status":"Fail"})
-                .end();
+                    .setChunked(true)
+                    .putHeader("content-type", "application/json")
+                    .setStatusCode(404)
+                    .write({ "status": "Fail" })
+                    .end();
             }
         });
-    });    
+    });
 };
 
 function getOne(context) {
     var userId = context.request().getParam("id") || "";
     eb.send("user.get.id", { 'id': userId }, function (ar, ar_err) {
-        if(ar_err == null){
+        if (ar_err == null) {
             context.response()
                 .setChunked(true)
                 .putHeader("content-type", "application/json")

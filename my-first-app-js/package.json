@@ -9,6 +9,7 @@
     "start": "./node_modules/.bin/vertx run server.js"
   },
   "dependencies": {
-    "vertx3-full": "^3.2.1"
+    "vertx3-full": "^3.2.1",
+    "vertx-mongo-client": "^3.2.1"
   }
 }

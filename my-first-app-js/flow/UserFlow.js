@@ -26,6 +26,12 @@ var flows = function() {
         users.push(user);
         msg.reply(users); 
     });
+    
+    eb.consumer("user.delete.one").handler(function(msg){
+       var userId = msg.body().id;
+       users.splice(userId, 1);
+       msg.reply(users);
+    });
 };
 
 module.export = flows();
